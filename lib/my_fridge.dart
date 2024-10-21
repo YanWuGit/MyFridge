@@ -1,9 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:my_fridge/zones/zone.dart';
 import 'package:my_fridge/settings.dart';
+import 'package:my_fridge/zones/zone_class.dart';
+import 'item_class.dart';
 
-class MyFridge extends StatelessWidget {
+class MyFridge extends StatefulWidget {
   const MyFridge({super.key});
+
+  @override
+  State<MyFridge> createState() => _MyFridgeState();
+}
+
+class _MyFridgeState extends State<MyFridge> {
+
+
+  List<ItemClass> chillItems = [
+    ItemClass('milk', 4),
+    ItemClass('bread', 8),
+    ItemClass('ham', 12),
+  ];
+
+  List<ItemClass> freezeItems = [
+    ItemClass('pork', 3),
+    ItemClass('beef', 6),
+    ItemClass('sausage', 9),
+  ];
+
+  late List<ZoneClass> zoneClasses = [
+    ZoneClass('Chill Zone', 1, chillItems),
+    ZoneClass('Freeze Zone', 1, freezeItems),
+  ];
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,20 +44,21 @@ class MyFridge extends StatelessWidget {
                   centerTitle: true,
                 ),
                 body: ListView(
-                  children: [
-                    ElevatedButton(
+                  children: zoneClasses.map((zoneClass) {
+                    return ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const ChillZone(),
+                            builder: (_) => Zone(zoneName: zoneClass.zoneName, zoneLayers: zoneClass.zoneLayers, items: zoneClass.items),
                           ),
                         );
                       },
-                      child: const Text('Chill Zone'),
-                    ),
-                  ],
+                      child: Text(zoneClass.zoneName),
+                    );
+                  }).toList(),
                 ),
+
                 drawer: Drawer(
                   child: ListView(
                     // padding: ,

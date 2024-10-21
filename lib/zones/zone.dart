@@ -2,33 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:my_fridge/item.dart';
 import '../item_class.dart';
 
-class ChillZone extends StatefulWidget {
-  const ChillZone({super.key});
+class Zone extends StatefulWidget {
+
+  final String zoneName;
+  final int zoneLayers;
+  final List<ItemClass> items;
+  
+  const Zone({
+    required this.zoneName,
+    required this.zoneLayers,
+    required this.items,
+    super.key
+  });
 
   @override
-  State<ChillZone> createState() => _ChillZoneState();
+  State<Zone> createState() => _ZoneState();
 }
 
-class _ChillZoneState extends State<ChillZone> {
-
-  List<ItemClass> items = [
-    ItemClass('milk', 4),
-    ItemClass('bread', 8),
-    ItemClass('ham', 12),
-  ];
-
+class _ZoneState extends State<Zone> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chill Zone'),
+        title: Text(widget.zoneName),
         centerTitle: true,
       ),
       body: Column(
         children: [
           Row(
-            children: items.map((item) => Item(itemName: item.itemName, itemAmount: item.itemAmount)).toList(),
+            children: widget.items.map((item) => Item(itemName: item.itemName, itemAmount: item.itemAmount)).toList(),
           ),
         ],
       ),
