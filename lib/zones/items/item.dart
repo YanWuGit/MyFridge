@@ -18,7 +18,7 @@ class _ItemState extends State<Item> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Card(
       color: Colors.lightBlueAccent,
       child: Padding(
         padding: const EdgeInsets.all(8.0),

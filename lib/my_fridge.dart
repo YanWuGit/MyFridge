@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_fridge/zones/zone.dart';
 import 'package:my_fridge/settings.dart';
 import 'package:my_fridge/zones/zone_class.dart';
-import 'item_class.dart';
+import 'package:my_fridge/zones/items/item_class.dart';
+import 'package:my_fridge/zones/items/add_items_form.dart';
 
 class MyFridge extends StatefulWidget {
   const MyFridge({super.key});
@@ -81,13 +82,8 @@ class _MyFridgeState extends State<MyFridge> {
                     ],
                   ),
                 ),
-                floatingActionButton: FloatingActionButton(
-                  child: const Icon(Icons.add),
-                  onPressed: () {
-                    print('pressed!');
-                  },
-                ),
               )),
         ));
   }
 }
+

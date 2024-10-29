@@ -1,4 +1,4 @@
-import 'package:my_fridge/item_class.dart';
+import 'package:my_fridge/zones/items/item_class.dart';
 
 class ZoneClass {
 

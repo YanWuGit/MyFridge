@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:my_fridge/item.dart';
-import '../item_class.dart';
+import 'package:my_fridge/zones/items/item.dart';
+import 'package:my_fridge/zones/items/item_class.dart';
+import 'package:my_fridge/zones/items/add_items_form.dart';
 
 class Zone extends StatefulWidget {
 
@@ -41,8 +42,20 @@ class _ZoneState extends State<Zone> {
           Icons.add,
           size: 40.0,
         ),
-        onPressed: () {},
+        onPressed: (){_showAddItemDialog(context, AddItemsForm());}
       ),
+    );
+  }
+
+  void _showAddItemDialog(BuildContext context, var val) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.blue,
+            child: val,
+          );
+        }
     );
   }
 }
