@@ -52,7 +52,7 @@ class _ZoneState extends State<Zone> {
         context: context,
         builder: (BuildContext context) {
           return Dialog(
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.white,
             child: val,
           );
         }
