@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 class InputField extends StatelessWidget {
-  String title;
-  bool isSecured; //set to true to hide content
+  final String title;
+  final bool isSecured;
+  final TextEditingController controller;
 
-  InputField({required this.title, required this.isSecured});
+  InputField(
+      {required this.title, required this.isSecured, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +23,22 @@ class InputField extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color:Colors.transparent, width: 0),
+                border: Border.all(color: Colors.transparent, width: 0),
                 color: Color.fromARGB(255, 241, 241, 241),
               ),
               child: TextField(
+                controller: controller,
                 obscureText: isSecured,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                 decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: title,
-                  hintStyle: TextStyle(color: Colors.grey)
-                ),
+                    border: InputBorder.none,
+                    hintText: title,
+                    hintStyle: TextStyle(color: Colors.grey)),
               ),
             ),
           )
         ],
       ),
     );
-
-
   }
 }

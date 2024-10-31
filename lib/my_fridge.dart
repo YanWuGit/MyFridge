@@ -16,9 +16,7 @@ class _MyFridgeState extends State<MyFridge> {
 
 
   List<ItemClass> chillItems = [
-    ItemClass('milk', 4),
-    ItemClass('bread', 8),
-    ItemClass('ham', 12),
+
   ];
 
   List<ItemClass> freezeItems = [

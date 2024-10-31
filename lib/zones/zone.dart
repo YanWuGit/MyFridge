@@ -22,6 +22,20 @@ class Zone extends StatefulWidget {
 
 class _ZoneState extends State<Zone> {
 
+  late List<ItemClass> displayedItems;
+
+  @override
+  void initState() {
+    super.initState();
+    displayedItems = widget.items; // Copy initial items for display
+  }
+
+  void _addItem(ItemClass newItem) {
+    setState(() {
+      displayedItems.add(newItem);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,18 +56,18 @@ class _ZoneState extends State<Zone> {
           Icons.add,
           size: 40.0,
         ),
-        onPressed: (){_showAddItemDialog(context, AddItemsForm());}
+        onPressed: (){_showAddItemDialog(context);}
       ),
     );
   }
 
-  void _showAddItemDialog(BuildContext context, var val) {
+  void _showAddItemDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return Dialog(
             backgroundColor: Colors.white,
-            child: val,
+            child: AddItemsForm(onAddItem: _addItem),
           );
         }
     );
