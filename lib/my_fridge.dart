@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:my_fridge/hive_service.dart';
 import 'package:my_fridge/zones/zone.dart';
 import 'package:my_fridge/settings.dart';
 import 'package:my_fridge/zones/zone_class.dart';
@@ -14,10 +16,10 @@ class MyFridge extends StatefulWidget {
 
 class _MyFridgeState extends State<MyFridge> {
 
+  final _itemDB = HiveService().itemDB;
+  // _itemDB.put(1, 'hi from hive');
 
-  List<ItemClass> chillItems = [
-
-  ];
+  List<ItemClass> chillItems = [];
 
   List<ItemClass> freezeItems = [
     ItemClass('pork', 3),
@@ -30,6 +32,30 @@ class _MyFridgeState extends State<MyFridge> {
     ZoneClass('Freeze Zone', 1, freezeItems),
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    setupDatabase();
+  }
+
+  Future<void> setupDatabase() async {
+    try{
+      if (_itemDB.containsKey('chillItems')) {
+        final dynamicList = _itemDB.get('chillItems');
+        if (dynamicList is List<ItemClass>) {
+          chillItems = dynamicList;
+        } else {
+          print("stored list is not List<ItemClass>");
+        }
+        print("ChillItems exists in Hive");
+      } else {
+        _itemDB.put('chillItems', chillItems);
+        print("chillItems created in Hive");
+      }
+    } catch (e) {
+      print("Error loading data from Hive: $e");
+    }
+  }
 
 
   @override

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
+
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
+import 'package:my_fridge/hive_service.dart';
 
 class AddItemsForm extends StatefulWidget {
   final Function(ItemClass) onAddItem;
@@ -14,8 +15,8 @@ class AddItemsForm extends StatefulWidget {
 }
 
 class _AddItemsFormState extends State<AddItemsForm> {
-
-  final _itemDB = Hive.box('item_db');
+  final _itemDB = HiveService().itemDB;
+  List<ItemClass> chillItems = [];
 
   final _itemNameController = TextEditingController();
   final _itemAmountController = TextEditingController();
@@ -32,6 +33,21 @@ class _AddItemsFormState extends State<AddItemsForm> {
         _dialogHeight = Get.height / 1.30;
       });
     });
+
+    try {
+      if (_itemDB.containsKey('chillItems')) {
+        final dynamicList = _itemDB.get('chillItems');
+        print("Find chillItems in Hive from add_items_form");
+        if (dynamicList is List<ItemClass>) {
+          chillItems = dynamicList;
+          print("successfully set chillItems to the same as in itemDB");
+        } else {
+          print("dynamicList is not a list of ItemClass");
+        }
+      }
+    }catch(e) {
+      print("Loading item list from Hive failed initializing add_item dialog. $e");
+    }
   }
 
   @override
@@ -53,10 +69,17 @@ class _AddItemsFormState extends State<AddItemsForm> {
     print('Days Until Expire: $daysUntilExpire');
 
     ItemClass newItem = ItemClass(itemName, int.parse(itemAmount));
+
     widget.onAddItem(newItem);
 
-    _itemDB.put(1, 'hi from hive');
-    print(_itemDB.get(1));
+    try {
+      chillItems.add(newItem);
+      _itemDB.put('chillItems', chillItems);
+      print("successfully add newItem into itemDB");
+      print(_itemDB.get('chillItems'));
+    }catch(e) {
+      print("Adding to list in Hive failed. $e");
+    }
 
     // Optionally, you can clear the text fields after adding
     _itemNameController.clear();
