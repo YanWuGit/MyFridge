@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 
@@ -13,6 +14,8 @@ class AddItemsForm extends StatefulWidget {
 }
 
 class _AddItemsFormState extends State<AddItemsForm> {
+
+  final _itemDB = Hive.box('item_db');
 
   final _itemNameController = TextEditingController();
   final _itemAmountController = TextEditingController();
@@ -51,6 +54,9 @@ class _AddItemsFormState extends State<AddItemsForm> {
 
     ItemClass newItem = ItemClass(itemName, int.parse(itemAmount));
     widget.onAddItem(newItem);
+
+    _itemDB.put(1, 'hi from hive');
+    print(_itemDB.get(1));
 
     // Optionally, you can clear the text fields after adding
     _itemNameController.clear();
@@ -114,12 +120,30 @@ class _AddItemsFormState extends State<AddItemsForm> {
               isSecured: false,
               controller: _daysUntilExpireController,
             ),
+            const SizedBox(
+              height: 30,
+            ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                ElevatedButton(onPressed: null, child: Text('Cancel')),
-                ElevatedButton(onPressed: _addItem, child: Text('Add')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancel')),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: _addItem,
+                  child: Text('Add'),
+                ),
               ],
-            )
+            ),
+            const SizedBox(
+              height: 20,
+            ),
           ],
         ),
       ),
