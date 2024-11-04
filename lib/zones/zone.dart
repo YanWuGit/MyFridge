@@ -3,6 +3,8 @@ import 'package:my_fridge/zones/items/item.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 import 'package:my_fridge/zones/items/add_items_form.dart';
 
+import 'package:my_fridge/hive_service.dart';
+
 class Zone extends StatefulWidget {
 
   final String zoneName;
@@ -21,18 +23,43 @@ class Zone extends StatefulWidget {
 }
 
 class _ZoneState extends State<Zone> {
-
-  late List<ItemClass> displayedItems;
+  final _itemDB = HiveService().itemDB;
+  List<ItemClass> displayedItems = [];
 
   @override
   void initState() {
     super.initState();
-    displayedItems = widget.items; // Copy initial items for display
+
+    try {
+      if (_itemDB.containsKey('chillItems')) {
+        final dynamicList = _itemDB.get('chillItems');
+        print("Find chillItems in Hive from add_items_form");
+        if (dynamicList is List<ItemClass>) {
+          displayedItems = dynamicList;
+          print("successfully set chillItems to the same as in itemDB");
+        } else {
+
+          print("dynamicList is not a list of ItemClass");
+        }
+      }
+    }catch(e) {
+      print("Loading item list from Hive failed initializing add_item dialog. $e");
+    }
+
   }
 
   void _addItem(ItemClass newItem) {
     setState(() {
-      displayedItems.add(newItem);
+
+      try {
+        displayedItems.add(newItem);
+        _itemDB.put('chillItems', displayedItems);
+        print("successfully add newItem into itemDB");
+        print(_itemDB.get('chillItems'));
+      }catch(e) {
+        print("Adding to list in Hive failed. $e");
+      }
+
     });
   }
 
@@ -46,7 +73,7 @@ class _ZoneState extends State<Zone> {
       body: Column(
         children: [
           Row(
-            children: widget.items.map((item) => Item(itemName: item.itemName, itemAmount: item.itemAmount)).toList(),
+            children: displayedItems.map((item) => Item(itemName: item.itemName, itemAmount: item.itemAmount)).toList(),
           ),
         ],
       ),

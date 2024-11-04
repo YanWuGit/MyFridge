@@ -15,7 +15,7 @@ class AddItemsForm extends StatefulWidget {
 }
 
 class _AddItemsFormState extends State<AddItemsForm> {
-  final _itemDB = HiveService().itemDB;
+  // final _itemDB = HiveService().itemDB;
   List<ItemClass> chillItems = [];
 
   final _itemNameController = TextEditingController();
@@ -34,20 +34,20 @@ class _AddItemsFormState extends State<AddItemsForm> {
       });
     });
 
-    try {
-      if (_itemDB.containsKey('chillItems')) {
-        final dynamicList = _itemDB.get('chillItems');
-        print("Find chillItems in Hive from add_items_form");
-        if (dynamicList is List<ItemClass>) {
-          chillItems = dynamicList;
-          print("successfully set chillItems to the same as in itemDB");
-        } else {
-          print("dynamicList is not a list of ItemClass");
-        }
-      }
-    }catch(e) {
-      print("Loading item list from Hive failed initializing add_item dialog. $e");
-    }
+    // try {
+    //   if (_itemDB.containsKey('chillItems')) {
+    //     final dynamicList = _itemDB.get('chillItems');
+    //     print("Find chillItems in Hive from add_items_form");
+    //     if (dynamicList is List<ItemClass>) {
+    //       chillItems = dynamicList;
+    //       print("successfully set chillItems to the same as in itemDB");
+    //     } else {
+    //       print("dynamicList is not a list of ItemClass");
+    //     }
+    //   }
+    // }catch(e) {
+    //   print("Loading item list from Hive failed initializing add_item dialog. $e");
+    // }
   }
 
   @override
@@ -58,6 +58,8 @@ class _AddItemsFormState extends State<AddItemsForm> {
     super.dispose();
   }
 
+  // call this function to add items to database and show on screen
+  // rebuild the zone page when this function be called
   void _addItem() {
     String itemName = _itemNameController.text.trim();
     String itemAmount = _itemAmountController.text.trim();
@@ -72,14 +74,14 @@ class _AddItemsFormState extends State<AddItemsForm> {
 
     widget.onAddItem(newItem);
 
-    try {
-      chillItems.add(newItem);
-      _itemDB.put('chillItems', chillItems);
-      print("successfully add newItem into itemDB");
-      print(_itemDB.get('chillItems'));
-    }catch(e) {
-      print("Adding to list in Hive failed. $e");
-    }
+    // try {
+    //   chillItems.add(newItem);
+    //   _itemDB.put('chillItems', chillItems);
+    //   print("successfully add newItem into itemDB");
+    //   print(_itemDB.get('chillItems'));
+    // }catch(e) {
+    //   print("Adding to list in Hive failed. $e");
+    // }
 
     // Optionally, you can clear the text fields after adding
     _itemNameController.clear();
