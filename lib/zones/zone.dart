@@ -67,20 +67,19 @@ class _ZoneState extends State<Zone> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double itemWidth = screenWidth/4;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.zoneName),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Row(
-            children: displayedItems
-                .map((item) =>
-                    Item(itemName: item.itemName, itemAmount: item.itemAmount))
-                .toList(),
-          ),
-        ],
+      body: Wrap(
+        children: displayedItems
+            .map((item) =>
+                Item(itemName: item.itemName, itemAmount: item.itemAmount, itemWidth: itemWidth,))
+            .toList(),
       ),
       floatingActionButton: FloatingActionButton(
           child: const Icon(
