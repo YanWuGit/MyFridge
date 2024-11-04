@@ -42,12 +42,16 @@ class _MyFridgeState extends State<MyFridge> {
     try{
       if (_itemDB.containsKey('chillItems')) {
         final dynamicList = _itemDB.get('chillItems');
-        if (dynamicList is List<ItemClass>) {
-          chillItems = dynamicList;
+        if (dynamicList is List) {
+          chillItems = dynamicList.map((e) {
+            if (e is ItemClass) return e;
+            return null;
+          }).whereType<ItemClass>().toList();
+          print('chillItems set successfully');
+          print(chillItems);
         } else {
-          print("stored list is not List<ItemClass>");
+          print('chillItems is not a list');
         }
-        print("ChillItems exists in Hive");
       } else {
         _itemDB.put('chillItems', chillItems);
         print("chillItems created in Hive");
