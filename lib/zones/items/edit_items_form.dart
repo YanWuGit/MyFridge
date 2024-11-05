@@ -4,16 +4,20 @@ import 'package:get/get.dart';
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 
-class AddItemsForm extends StatefulWidget {
-  final Function(ItemClass) onAddItem;
+class EditItemsForm extends StatefulWidget {
+  final Function(ItemClass) onEditItem;
+  final ItemClass itemEditing;
 
-  const AddItemsForm({required this.onAddItem, super.key});
+  const EditItemsForm({
+  required this.onEditItem,
+  required this.itemEditing,
+  super.key});
 
   @override
-  State<AddItemsForm> createState() => _AddItemsFormState();
+  State<EditItemsForm> createState() => _EditItemsFormState();
 }
 
-class _AddItemsFormState extends State<AddItemsForm> {
+class _EditItemsFormState extends State<EditItemsForm> {
   List<ItemClass> chillItems = [];
 
   final _itemNameController = TextEditingController();
@@ -43,7 +47,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
 
   // call this function to add items to database and show on screen
   // rebuild the zone page when this function be called
-  void _addItem() {
+  void _editItem() {
     String itemName = _itemNameController.text.trim();
     String itemAmount = _itemAmountController.text.trim();
     String daysUntilExpire = _daysUntilExpireController.text.trim();
@@ -52,9 +56,15 @@ class _AddItemsFormState extends State<AddItemsForm> {
     // print('Item Amount: $itemAmount');
     // print('Days Until Expire: $daysUntilExpire');
 
-    ItemClass newItem = ItemClass(itemName, int.parse(itemAmount));
-
-    widget.onAddItem(newItem);
+    print(itemName);
+    print(itemAmount);
+    if (itemName.isNotEmpty) {
+      widget.itemEditing.itemName = itemName;
+    }
+    if (itemAmount.isNotEmpty && int.tryParse(itemAmount) != null) {
+      widget.itemEditing.itemAmount = int.parse(itemAmount);
+    }
+    widget.onEditItem(widget.itemEditing);
 
     _itemNameController.clear();
     _itemAmountController.clear();
@@ -85,7 +95,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
                 width: _dialogWidth,
                 child: const Center(
                   child: Text(
-                    'Add An Item',
+                    'Edit Item',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -100,6 +110,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
               title: 'Item Name',
               isSecured: false,
               controller: _itemNameController,
+              hintText: widget.itemEditing.itemName,
             ),
             const SizedBox(
               height: 20,
@@ -108,6 +119,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
               title: 'Item Amount',
               isSecured: false,
               controller: _itemAmountController,
+              hintText: '${widget.itemEditing.itemAmount}',
             ),
             const SizedBox(
               height: 20,
@@ -133,7 +145,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
                     backgroundColor: Colors.blueAccent,
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: _addItem,
+                  onPressed: _editItem,
                   child: Text('Add'),
                 ),
               ],

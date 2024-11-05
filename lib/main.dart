@@ -13,6 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   checkAndRequestPermissions();
   await Hive.initFlutter();
+
   Hive.registerAdapter(ItemClassAdapter());
 
   await HiveService().initialize();

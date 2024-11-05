@@ -17,17 +17,9 @@ class _MyFridgeState extends State<MyFridge> {
   final _itemDB = HiveService().itemDB;
   // _itemDB.put(1, 'hi from hive');
 
-  List<ItemClass> chillItems = [];
-
-  List<ItemClass> freezeItems = [
-    ItemClass('pork', 3),
-    ItemClass('beef', 6),
-    ItemClass('sausage', 9),
-  ];
-
   late List<ZoneClass> zoneClasses = [
-    ZoneClass('Chill Zone', 1, chillItems),
-    ZoneClass('Freeze Zone', 1, freezeItems),
+    ZoneClass('Chill Zone', 1, []),
+    ZoneClass('Freeze Zone', 1, []),
   ];
 
   @override
@@ -37,25 +29,28 @@ class _MyFridgeState extends State<MyFridge> {
   }
 
   Future<void> setupDatabase() async {
-    try{
-      if (_itemDB.containsKey('chillItems')) {
-        final dynamicList = _itemDB.get('chillItems');
-        if (dynamicList is List) {
-          chillItems = dynamicList.map((e) {
-            if (e is ItemClass) return e;
-            return null;
-          }).whereType<ItemClass>().toList();
-          print('chillItems set successfully');
-          print(chillItems);
+    for (ZoneClass zone in zoneClasses) {
+      List<ItemClass> displayedList = [];
+      try{
+        if (_itemDB.containsKey(zone.zoneName)) {
+          final dynamicList = _itemDB.get(zone.zoneName);
+          if (dynamicList is List) {
+             displayedList = dynamicList.map((e) {
+              if (e is ItemClass) return e;
+              return null;
+            }).whereType<ItemClass>().toList();
+            print('my_fridge: ${zone.zoneName} set successfully');
+            print(displayedList);
+          } else {
+            print('my_fridge: ${zone.zoneName} is not a list');
+          }
         } else {
-          print('chillItems is not a list');
+          _itemDB.put(zone.zoneName, displayedList);
+          print("my_fridge: ${zone.zoneName} created in Hive");
         }
-      } else {
-        _itemDB.put('chillItems', chillItems);
-        print("chillItems created in Hive");
+      } catch (e) {
+        print("my_fridge: Error loading data from Hive: $e");
       }
-    } catch (e) {
-      print("Error loading data from Hive: $e");
     }
   }
 

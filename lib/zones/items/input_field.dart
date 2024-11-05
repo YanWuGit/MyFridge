@@ -4,9 +4,14 @@ class InputField extends StatelessWidget {
   final String title;
   final bool isSecured;
   final TextEditingController controller;
+  final String? hintText;
 
-  InputField(
-      {required this.title, required this.isSecured, required this.controller});
+  InputField({
+    required this.title,
+    required this.isSecured,
+    required this.controller,
+    this.hintText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class InputField extends StatelessWidget {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
                 decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: title,
+                    hintText: hintText??title,
                     hintStyle: TextStyle(color: Colors.grey)),
               ),
             ),

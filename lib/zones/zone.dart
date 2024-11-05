@@ -29,9 +29,9 @@ class _ZoneState extends State<Zone> {
     super.initState();
 
     try {
-      if (_itemDB.containsKey('chillItems')) {
-        final dynamicList = _itemDB.get('chillItems');
-        print("zone: Find chillItems in Hive from zone");
+      if (_itemDB.containsKey(widget.zoneName)) {
+        final dynamicList = _itemDB.get(widget.zoneName);
+        print("zone: Find ${widget.zoneName} in Hive from zone");
         if (dynamicList is List) {
           displayedItems = dynamicList
               .map((e) {
@@ -41,7 +41,7 @@ class _ZoneState extends State<Zone> {
               .whereType<ItemClass>()
               .toList();
         } else {
-          print('zone: chillItems is not a list');
+          print('zone: ${widget.zoneName} is not a list');
         }
       } else {
         print("zone: dynamicList is not a list of ItemClass");
@@ -56,11 +56,31 @@ class _ZoneState extends State<Zone> {
     setState(() {
       try {
         displayedItems.add(newItem);
-        _itemDB.put('chillItems', displayedItems);
+        _itemDB.put(widget.zoneName, displayedItems);
         print("zone: successfully add newItem into itemDB");
-        print(_itemDB.get('chillItems'));
+        print('item id : ${newItem.id}');
+        print(_itemDB.get(widget.zoneName));
       } catch (e) {
         print("zone: Adding to list in Hive failed. $e");
+      }
+    });
+  }
+
+  void _editItem(ItemClass editedItem) {
+    setState(() {
+      try {
+        print('edited item id: ${editedItem.id}');
+        int index =  displayedItems.indexWhere((item) => item.id == editedItem.id);
+        if (index != -1) {
+          displayedItems[index] = editedItem;
+
+          _itemDB.put(widget.zoneName, displayedItems);
+          print('zone: Successfully updated edited item in hive.');
+        } else {
+          print('zone: item to edit not found in list.');
+        }
+      } catch (e){
+        print('zone: Editing item and store in Hive failed. $e');
       }
     });
   }
@@ -78,7 +98,7 @@ class _ZoneState extends State<Zone> {
       body: Wrap(
         children: displayedItems
             .map((item) =>
-                Item(itemName: item.itemName, itemAmount: item.itemAmount, itemWidth: itemWidth,))
+                Item(item: item, itemWidth: itemWidth, onEditItem: _editItem,))
             .toList(),
       ),
       floatingActionButton: FloatingActionButton(
