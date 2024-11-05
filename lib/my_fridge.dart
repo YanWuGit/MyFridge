@@ -14,6 +14,8 @@ class MyFridge extends StatefulWidget {
 
 class _MyFridgeState extends State<MyFridge> {
 
+
+
   final _itemDB = HiveService().itemDB;
   // _itemDB.put(1, 'hi from hive');
 
@@ -31,14 +33,17 @@ class _MyFridgeState extends State<MyFridge> {
   Future<void> setupDatabase() async {
     for (ZoneClass zone in zoneClasses) {
       List<ItemClass> displayedList = [];
-      try{
+      try {
         if (_itemDB.containsKey(zone.zoneName)) {
           final dynamicList = _itemDB.get(zone.zoneName);
           if (dynamicList is List) {
-             displayedList = dynamicList.map((e) {
-              if (e is ItemClass) return e;
-              return null;
-            }).whereType<ItemClass>().toList();
+            displayedList = dynamicList
+                .map((e) {
+                  if (e is ItemClass) return e;
+                  return null;
+                })
+                .whereType<ItemClass>()
+                .toList();
             print('my_fridge: ${zone.zoneName} set successfully');
             print(displayedList);
           } else {
@@ -54,57 +59,71 @@ class _MyFridgeState extends State<MyFridge> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Builder(
-          builder: (context) => Center(
-              child: Scaffold(
-                appBar: AppBar(
-                  title: const Text('My Fridge'),
-                  centerTitle: true,
-                ),
-                body: ListView(
-                  children: zoneClasses.map((zoneClass) {
-                    return ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => Zone(zoneName: zoneClass.zoneName, zoneLayers: zoneClass.zoneLayers, items: zoneClass.items),
-                          ),
-                        );
-                      },
-                      child: Text(zoneClass.zoneName),
-                    );
-                  }).toList(),
-                ),
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
-                drawer: Drawer(
-                  child: ListView(
-                    // padding: ,
-                    children: [
-                      const DrawerHeader(
-                        decoration: BoxDecoration(
-                          color: Colors.amber,
-                        ),
-                        child: Text('Menu'),
+    return MaterialApp(
+      home: Builder(
+        builder: (context) => Center(
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('My Fridge'),
+              centerTitle: true,
+            ),
+           body: Column(
+          children: zoneClasses.map((zoneClass) {
+            return Card(
+                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Zone(
+                            zoneName: zoneClass.zoneName,
+                            zoneLayers: zoneClass.zoneLayers,
+                            items: zoneClass.items),
                       ),
-                      ListTile(
-                        title: const Text('Settings'),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const Settings()),
-                          );
-                        },
-                      )
-                    ],
+                    );
+                  },
+                  child: Container(
+                    width: screenWidth,
+                    height: screenHeight*2/(3*zoneClasses.length),
+                    padding: EdgeInsets.all(18.0),
+                    child: Text(
+                        zoneClass.zoneName,
+                      style: TextStyle(fontSize: 24.0),
+                    )
                   ),
-                ),
-              )),
-        ));
+                ));
+              }).toList(),
+            ),
+
+        // drawer: Drawer(
+        //   child: ListView(
+        //     // padding: ,
+        //     children: [
+        //       const DrawerHeader(
+        //         decoration: BoxDecoration(
+        //           color: Colors.amber,
+        //         ),
+        //         child: Text('Menu'),
+        //       ),
+        //       ListTile(
+        //         title: const Text('Settings'),
+        //         onTap: () {
+        //           Navigator.push(
+        //             context,
+        //             MaterialPageRoute(builder: (_) => const Settings()),
+        //           );
+        //         },
+        //       )
+        //     ],
+        //   ),
+        // ),
+      )),
+    ));
   }
 }
-
