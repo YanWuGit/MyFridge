@@ -6,10 +6,12 @@ import 'package:my_fridge/zones/items/item_class.dart';
 
 class EditItemsForm extends StatefulWidget {
   final Function(ItemClass) onEditItem;
+  final Function(ItemClass) onDeleteItem;
   final ItemClass itemEditing;
 
   const EditItemsForm({
   required this.onEditItem,
+  required this.onDeleteItem,
   required this.itemEditing,
   super.key});
 
@@ -18,13 +20,11 @@ class EditItemsForm extends StatefulWidget {
 }
 
 class _EditItemsFormState extends State<EditItemsForm> {
-  List<ItemClass> chillItems = [];
-
   final _itemNameController = TextEditingController();
   final _itemAmountController = TextEditingController();
   final _daysUntilExpireController = TextEditingController();
 
-  double _dialogWidth = Get.width;
+  final double _dialogWidth = Get.width;
 
   @override
   void initState() {
@@ -73,6 +73,19 @@ class _EditItemsFormState extends State<EditItemsForm> {
     Navigator.of(context).pop();
   }
 
+  void _deleteItem() {
+    String itemName = _itemNameController.text.trim();
+    String itemAmount = _itemAmountController.text.trim();
+
+    widget.onDeleteItem(widget.itemEditing);
+
+    _itemNameController.clear();
+    _itemAmountController.clear();
+    _daysUntilExpireController.clear();
+
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -93,15 +106,27 @@ class _EditItemsFormState extends State<EditItemsForm> {
                   color: Colors.blueAccent,
                 ),
                 width: _dialogWidth,
-                child: const Center(
-                  child: Text(
-                    'Edit Item',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(width: 36,),
+                    const Center(
+                      child: Text(
+                        'Edit Item',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                  ),
+                    // This button deletes the current item
+                    IconButton(
+                        onPressed: _deleteItem,
+                        icon: const Icon(Icons.delete, size: 36,),
+                      tooltip: 'Delete item',
+                    )
+                  ],
                 )),
             const SizedBox(
               height: 20,
@@ -139,14 +164,14 @@ class _EditItemsFormState extends State<EditItemsForm> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('Cancel')),
+                    child: const Text('Cancel')),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                     foregroundColor: Colors.white,
                   ),
                   onPressed: _editItem,
-                  child: Text('Add'),
+                  child: const Text('Update'),
                 ),
               ],
             ),

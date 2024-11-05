@@ -8,11 +8,13 @@ class Item extends StatefulWidget {
   final ItemClass item;
   final double itemWidth;
   final Function(ItemClass) onEditItem;
+  final Function(ItemClass) onDeleteItem;
 
   const Item({
     required this.item,
     required this.itemWidth,
     required this.onEditItem,
+    required this.onDeleteItem,
     super.key
   });
 
@@ -29,7 +31,7 @@ class _ItemState extends State<Item> {
         builder: (BuildContext context) {
           return Dialog(
             backgroundColor: Colors.white,
-            child: EditItemsForm(onEditItem: widget.onEditItem, itemEditing: widget.item,),
+            child: EditItemsForm(onEditItem: widget.onEditItem, itemEditing: widget.item, onDeleteItem: widget.onDeleteItem,),
           );
         });
   }

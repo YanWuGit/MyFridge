@@ -85,6 +85,25 @@ class _ZoneState extends State<Zone> {
     });
   }
 
+  void _deleteItem(ItemClass editedItem) {
+    setState(() {
+      try {
+        print('edited item id: ${editedItem.id}');
+        int index =  displayedItems.indexWhere((item) => item.id == editedItem.id);
+        if (index != -1) {
+          displayedItems.removeAt(index);
+
+          _itemDB.put(widget.zoneName, displayedItems);
+          print('zone: Successfully removed item from hive.');
+        } else {
+          print('zone: item to delete not found in list.');
+        }
+      } catch (e){
+        print('zone: Delete item and update Hive failed. $e');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -98,7 +117,7 @@ class _ZoneState extends State<Zone> {
       body: Wrap(
         children: displayedItems
             .map((item) =>
-                Item(item: item, itemWidth: itemWidth, onEditItem: _editItem,))
+                Item(item: item, itemWidth: itemWidth, onEditItem: _editItem, onDeleteItem: _deleteItem,))
             .toList(),
       ),
       floatingActionButton: FloatingActionButton(
