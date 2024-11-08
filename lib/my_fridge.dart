@@ -13,15 +13,12 @@ class MyFridge extends StatefulWidget {
 }
 
 class _MyFridgeState extends State<MyFridge> {
-
-
-
   final _itemDB = HiveService().itemDB;
   // _itemDB.put(1, 'hi from hive');
 
   late List<ZoneClass> zoneClasses = [
-    ZoneClass('Chill Zone', 1, []),
-    ZoneClass('Freeze Zone', 1, []),
+    ZoneClass('Chill Zone', 1, [], 'assets/pics/chill_zone_bg.jpg'),
+    ZoneClass('Freeze Zone', 1, [], 'assets/pics/freeze_zone_bg.jpg', zoneNameY: 1),
   ];
 
   @override
@@ -63,43 +60,59 @@ class _MyFridgeState extends State<MyFridge> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    double zoneCardHeight = screenHeight * 2 / (3 * zoneClasses.length);
+    double zoneCardWidth = screenWidth;
 
     return MaterialApp(
-      home: Builder(
-        builder: (context) => Center(
+        home: Builder(
+      builder: (context) => Center(
           child: Scaffold(
-            appBar: AppBar(
-              title: const Text('My Fridge'),
-              centerTitle: true,
-            ),
-           body: Column(
+        appBar: AppBar(
+          title: const Text('My Fridge'),
+          centerTitle: true,
+        ),
+        body: Column(
           children: zoneClasses.map((zoneClass) {
             return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
                 margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => Zone(
-                            zoneName: zoneClass.zoneName,
-                            zoneLayers: zoneClass.zoneLayers,
-                            items: zoneClass.items),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: screenWidth,
-                    height: screenHeight*2/(3*zoneClasses.length),
-                    padding: EdgeInsets.all(18.0),
-                    child: Text(
-                        zoneClass.zoneName,
-                      style: TextStyle(fontSize: 24.0),
-                    )
-                  ),
+                clipBehavior: Clip.antiAlias,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Stack(children: [
+                    Positioned.fill(
+                        child: Image.asset(
+                      zoneClass.zoneBGImage,
+                      fit: BoxFit.cover,
+                    )),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Zone(
+                                zoneName: zoneClass.zoneName,
+                                zoneLayers: zoneClass.zoneLayers,
+                                items: zoneClass.items),
+                          ),
+                        );
+                      },
+                      child: Container(
+                          width: zoneCardWidth,
+                          height: zoneCardHeight,
+                          padding: EdgeInsets.all(18.0),
+                          alignment: Alignment(zoneClass.zoneNameX, zoneClass.zoneNameY),
+                          child: Text(
+                            zoneClass.zoneName,
+                            style: TextStyle(fontSize: 24.0),
+                          )),
+                    ),
+                  ]),
                 ));
-              }).toList(),
-            ),
+          }).toList(),
+        ),
 
         // drawer: Drawer(
         //   child: ListView(
