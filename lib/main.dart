@@ -18,6 +18,7 @@ void main() async {
 
   await HiveService().initialize();
 
+
   runApp(GetMaterialApp(
     home: MyFridge(),
   ) );

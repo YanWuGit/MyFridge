@@ -1,8 +1,11 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
+
+import 'package:my_fridge/util/take_picture.dart';
 
 class AddItemsForm extends StatefulWidget {
   final Function(ItemClass) onAddItem;
@@ -63,6 +66,18 @@ class _AddItemsFormState extends State<AddItemsForm> {
     Navigator.of(context).pop();
   }
 
+  Future<void> _navToTakePicture() async {
+    final cameras = await availableCameras();
+
+    try {
+      final result = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => TakePicture(cameras: cameras)),
+      );
+    } catch (e) {
+      print("add_items_form: error navigate to camera - $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -93,6 +108,17 @@ class _AddItemsFormState extends State<AddItemsForm> {
                     ),
                   ),
                 )),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: _navToTakePicture,
+              child: Text('Take a photo'),
+            ),
             const SizedBox(
               height: 20,
             ),
