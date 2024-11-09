@@ -42,8 +42,10 @@ class _ItemState extends State<Item> {
 
   @override
   Widget build(BuildContext context) {
+    double cardWidth = widget.itemWidth;
+
     return SizedBox(
-      width: widget.itemWidth,
+      width: cardWidth,
       child: InkWell(
         onTap: _openItemEditing,
         child: Card(
@@ -52,19 +54,35 @@ class _ItemState extends State<Item> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                widget.imagePath == '' ?
-                const Icon(
-                  Icons.music_note,
-                  size: 60,
-                  color: Colors.amber,
-                )
-                : SizedBox(
-                  width: 60,
-                  height: 60,
-                  child: Image.file(File(widget.imagePath!)),
+                SizedBox(
+                  width: widget.itemWidth,
+                  height: 1.3 * widget.itemWidth,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.0),
+                    child: Image.file(
+                        File(
+                          widget.imagePath == ''?
+                          'assets/pics/chill_zone_bg.jpg'
+                            : widget.imagePath!
+                        ),
+                        fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                Text(widget.item.itemName),
-                Text('${widget.item.itemAmount}')
+                Text(
+                    widget.item.itemName,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                    '${widget.item.itemAmount}',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
               ],
             ),
           ),

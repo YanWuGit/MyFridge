@@ -111,7 +111,7 @@ class _ZoneState extends State<Zone> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double itemWidth = screenWidth / 4;
+    final double itemWidth = screenWidth / 3;
 
     return Scaffold(
       appBar: AppBar(
