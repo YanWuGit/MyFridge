@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -131,6 +133,15 @@ class _EditItemsFormState extends State<EditItemsForm> {
                     )
                   ],
                 )),
+            widget.itemEditing.imagePath == ''? const SizedBox(height: 20,) :
+            SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 0.4 * MediaQuery.of(context).size.height,
+                child: Image.file(
+                  File(widget.itemEditing.imagePath!),
+                  fit: BoxFit.cover,
+                ),
+              ),
             const SizedBox(
               height: 20,
             ),
