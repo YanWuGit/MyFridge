@@ -75,14 +75,17 @@ class TakePictureState extends State<TakePicture> {
         onPressed: () async {
           try {
             await _initializeControllerFuture;
-            final image = await _controller.takePicture();
+            final XFile image = await _controller.takePicture();
             if (!context.mounted) return;
 
-            await Navigator.of(context).push(
+            bool useThisPhoto = await Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DisplayPicture(imagePath: image.path),
               ),
             );
+            if (useThisPhoto) {
+              Navigator.pop(context, image);
+            }
           } catch (e) {
             print(e);
           }

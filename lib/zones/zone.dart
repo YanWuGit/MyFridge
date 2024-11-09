@@ -70,7 +70,8 @@ class _ZoneState extends State<Zone> {
     setState(() {
       try {
         print('edited item id: ${editedItem.id}');
-        int index =  displayedItems.indexWhere((item) => item.id == editedItem.id);
+        int index =
+            displayedItems.indexWhere((item) => item.id == editedItem.id);
         if (index != -1) {
           displayedItems[index] = editedItem;
 
@@ -79,7 +80,7 @@ class _ZoneState extends State<Zone> {
         } else {
           print('zone: item to edit not found in list.');
         }
-      } catch (e){
+      } catch (e) {
         print('zone: Editing item and store in Hive failed. $e');
       }
     });
@@ -89,7 +90,8 @@ class _ZoneState extends State<Zone> {
     setState(() {
       try {
         print('edited item id: ${editedItem.id}');
-        int index =  displayedItems.indexWhere((item) => item.id == editedItem.id);
+        int index =
+            displayedItems.indexWhere((item) => item.id == editedItem.id);
         if (index != -1) {
           displayedItems.removeAt(index);
 
@@ -98,7 +100,7 @@ class _ZoneState extends State<Zone> {
         } else {
           print('zone: item to delete not found in list.');
         }
-      } catch (e){
+      } catch (e) {
         print('zone: Delete item and update Hive failed. $e');
       }
     });
@@ -107,7 +109,7 @@ class _ZoneState extends State<Zone> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double itemWidth = screenWidth/4;
+    final double itemWidth = screenWidth / 4;
 
     return Scaffold(
       appBar: AppBar(
@@ -116,8 +118,13 @@ class _ZoneState extends State<Zone> {
       ),
       body: Wrap(
         children: displayedItems
-            .map((item) =>
-                Item(item: item, itemWidth: itemWidth, onEditItem: _editItem, onDeleteItem: _deleteItem,))
+            .map((item) => Item(
+                  item: item,
+                  itemWidth: itemWidth,
+                  onEditItem: _editItem,
+                  onDeleteItem: _deleteItem,
+                  imagePath: item.imagePath,
+                ))
             .toList(),
       ),
       floatingActionButton: FloatingActionButton(

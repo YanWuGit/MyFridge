@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:my_fridge/zones/items/edit_items_form.dart';
@@ -7,6 +9,7 @@ import 'package:my_fridge/zones/items/item_class.dart';
 class Item extends StatefulWidget {
   final ItemClass item;
   final double itemWidth;
+  final String? imagePath;
   final Function(ItemClass) onEditItem;
   final Function(ItemClass) onDeleteItem;
 
@@ -15,6 +18,7 @@ class Item extends StatefulWidget {
     required this.itemWidth,
     required this.onEditItem,
     required this.onDeleteItem,
+    this.imagePath,
     super.key
   });
 
@@ -48,10 +52,16 @@ class _ItemState extends State<Item> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
+                widget.imagePath == '' ?
                 const Icon(
                   Icons.music_note,
                   size: 60,
                   color: Colors.amber,
+                )
+                : SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: Image.file(File(widget.imagePath!)),
                 ),
                 Text(widget.item.itemName),
                 Text('${widget.item.itemAmount}')

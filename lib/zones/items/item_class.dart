@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
@@ -11,11 +13,13 @@ class ItemClass {
   int itemAmount = 0;
   @HiveField(2)
   String id;
+  @HiveField(3)
+  String? imagePath;
 
   static final Uuid _uuid = Uuid();
 
-  ItemClass(this.itemName, this.itemAmount):id = _uuid.v4();
+  ItemClass(this.itemName, this.itemAmount, {String? imagePath}):id = _uuid.v4(), imagePath = imagePath??'';
 
-  ItemClass.withId(this.itemName, this.itemAmount, this.id);
+  ItemClass.withId(this.itemName, this.itemAmount, this.id, {String? imagePath}): imagePath = imagePath??'';
 
 }

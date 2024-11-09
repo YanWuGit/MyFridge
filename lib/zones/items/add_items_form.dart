@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,23 +19,15 @@ class AddItemsForm extends StatefulWidget {
 }
 
 class _AddItemsFormState extends State<AddItemsForm> {
-  List<ItemClass> chillItems = [];
-
   final _itemNameController = TextEditingController();
   final _itemAmountController = TextEditingController();
   final _daysUntilExpireController = TextEditingController();
-
+  XFile? itemImage = null;
   double _dialogWidth = Get.width;
 
   @override
   void initState() {
     super.initState();
-    // Future.delayed(Duration(milliseconds: 50), () {
-    //   setState(() {
-    //    double _dialogHeight = Get.height / 1.30;
-    //   });
-    // });
-
   }
 
   @override
@@ -51,11 +45,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
     String itemAmount = _itemAmountController.text.trim();
     String daysUntilExpire = _daysUntilExpireController.text.trim();
 
-    // print('Item Name: $itemName');
-    // print('Item Amount: $itemAmount');
-    // print('Days Until Expire: $daysUntilExpire');
-
-    ItemClass newItem = ItemClass(itemName, int.parse(itemAmount));
+    ItemClass newItem = ItemClass(itemName, int.parse(itemAmount), imagePath: itemImage?.path);
 
     widget.onAddItem(newItem);
 
@@ -70,9 +60,14 @@ class _AddItemsFormState extends State<AddItemsForm> {
     final cameras = await availableCameras();
 
     try {
-      final result = await Navigator.of(context).push(
+      final XFile? image = await Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => TakePicture(cameras: cameras)),
       );
+      if (image != null) {
+        setState(() {
+          itemImage = image;
+        });
+      }
     } catch (e) {
       print("add_items_form: error navigate to camera - $e");
     }
@@ -80,6 +75,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -112,12 +108,23 @@ class _AddItemsFormState extends State<AddItemsForm> {
               height: 20,
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
+              style: itemImage == null? ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white,
+              ): ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
               ),
               onPressed: _navToTakePicture,
-              child: Text('Take a photo'),
+              child: itemImage == null ?
+                const Text('Take a photo')
+              : SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 0.4 * MediaQuery.of(context).size.height,
+                child: Image.file(
+                  File(itemImage!.path),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -153,14 +160,14 @@ class _AddItemsFormState extends State<AddItemsForm> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text('Cancel')),
+                    child: const Text('Cancel')),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                     foregroundColor: Colors.white,
                   ),
                   onPressed: _addItem,
-                  child: Text('Add'),
+                  child: const Text('Add'),
                 ),
               ],
             ),
