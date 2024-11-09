@@ -9,11 +9,13 @@ class Zone extends StatefulWidget {
   final String zoneName;
   final int zoneLayers;
   final List<ItemClass> items;
+  final String bgImagePath;
 
   const Zone(
       {required this.zoneName,
       required this.zoneLayers,
       required this.items,
+      required this.bgImagePath,
       super.key});
 
   @override
@@ -116,17 +118,24 @@ class _ZoneState extends State<Zone> {
         title: Text(widget.zoneName),
         centerTitle: true,
       ),
-      body: Wrap(
-        children: displayedItems
-            .map((item) => Item(
-                  item: item,
-                  itemWidth: itemWidth,
-                  onEditItem: _editItem,
-                  onDeleteItem: _deleteItem,
-                  imagePath: item.imagePath,
-                ))
-            .toList(),
-      ),
+      body: Stack(children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(widget.bgImagePath), fit: BoxFit.cover)),
+        ),
+        Wrap(
+          children: displayedItems
+              .map((item) => Item(
+                    item: item,
+                    itemWidth: itemWidth,
+                    onEditItem: _editItem,
+                    onDeleteItem: _deleteItem,
+                    imagePath: item.imagePath,
+                  ))
+              .toList(),
+        ),
+      ]),
       floatingActionButton: FloatingActionButton(
           child: const Icon(
             Icons.add,

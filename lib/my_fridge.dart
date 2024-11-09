@@ -95,7 +95,9 @@ class _MyFridgeState extends State<MyFridge> {
                             builder: (_) => Zone(
                                 zoneName: zoneClass.zoneName,
                                 zoneLayers: zoneClass.zoneLayers,
-                                items: zoneClass.items),
+                                items: zoneClass.items,
+                                bgImagePath: zoneClass.zoneBGImage,
+                            ),
                           ),
                         );
                       },
