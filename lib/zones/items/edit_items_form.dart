@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 import 'package:my_fridge/util/error_dialog.dart';
+import 'package:my_fridge/util/confirmation_dialog.dart';
 
 class EditItemsForm extends StatefulWidget {
   final Function(ItemClass) onEditItem;
@@ -78,17 +79,19 @@ class _EditItemsFormState extends State<EditItemsForm> {
     Navigator.of(context).pop();
   }
 
-  void _deleteItem() {
-    String itemName = _itemNameController.text.trim();
-    String itemAmount = _itemAmountController.text.trim();
+  void _deleteItem() async {
+    bool? deletionConfirm = await ConfirmationDialog.showConfirmationDialog(context, 'Delete this item: ${widget.itemEditing.itemName} ?');
 
-    widget.onDeleteItem(widget.itemEditing);
+    if (deletionConfirm == true) {
+      widget.onDeleteItem(widget.itemEditing);
 
-    _itemNameController.clear();
-    _itemAmountController.clear();
-    _daysUntilExpireController.clear();
+      _itemNameController.clear();
+      _itemAmountController.clear();
+      _daysUntilExpireController.clear();
 
-    Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
+    return;
   }
 
   @override

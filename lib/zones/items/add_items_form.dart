@@ -22,8 +22,8 @@ class _AddItemsFormState extends State<AddItemsForm> {
   final _itemNameController = TextEditingController();
   final _itemAmountController = TextEditingController();
   final _daysUntilExpireController = TextEditingController();
-  XFile? itemImage = null;
-  double _dialogWidth = Get.width;
+  XFile? itemImage;
+  final double _dialogWidth = Get.width;
 
   @override
   void initState() {
