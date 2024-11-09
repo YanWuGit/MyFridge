@@ -49,7 +49,7 @@ class _ItemState extends State<Item> {
       child: InkWell(
         onTap: _openItemEditing,
         child: Card(
-          color: Colors.lightBlueAccent,
+          color: Colors.greenAccent.withOpacity(0.5),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -59,11 +59,14 @@ class _ItemState extends State<Item> {
                   height: 1.3 * widget.itemWidth,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
-                    child: Image.file(
+                    child: widget.imagePath == ''?
+                        const Image(
+                          image: AssetImage('assets/pics/lunch-box-1141196_640.jpg'),
+                          fit: BoxFit.cover,
+                        )
+                        :Image.file(
                         File(
-                          widget.imagePath == ''?
-                          'assets/pics/chill_zone_bg.jpg'
-                            : widget.imagePath!
+                            widget.imagePath!
                         ),
                         fit: BoxFit.cover,
                     ),

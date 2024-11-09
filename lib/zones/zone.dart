@@ -124,16 +124,18 @@ class _ZoneState extends State<Zone> {
               image: DecorationImage(
                   image: AssetImage(widget.bgImagePath), fit: BoxFit.cover)),
         ),
-        Wrap(
-          children: displayedItems
-              .map((item) => Item(
-                    item: item,
-                    itemWidth: itemWidth,
-                    onEditItem: _editItem,
-                    onDeleteItem: _deleteItem,
-                    imagePath: item.imagePath,
-                  ))
-              .toList(),
+        SingleChildScrollView(
+          child: Wrap(
+            children: displayedItems
+                .map((item) => Item(
+                      item: item,
+                      itemWidth: itemWidth,
+                      onEditItem: _editItem,
+                      onDeleteItem: _deleteItem,
+                      imagePath: item.imagePath,
+                    ))
+                .toList(),
+          ),
         ),
       ]),
       floatingActionButton: FloatingActionButton(
