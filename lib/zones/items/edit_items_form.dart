@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
+import 'package:my_fridge/util/error_dialog.dart';
 
 class EditItemsForm extends StatefulWidget {
   final Function(ItemClass) onEditItem;
@@ -52,12 +53,14 @@ class _EditItemsFormState extends State<EditItemsForm> {
     String itemAmount = _itemAmountController.text.trim();
     String daysUntilExpire = _daysUntilExpireController.text.trim();
 
-    // print('Item Name: $itemName');
-    // print('Item Amount: $itemAmount');
-    // print('Days Until Expire: $daysUntilExpire');
+    // pop up error message if item amount is not a number
+    try {
+      int.parse(itemAmount);
+    } catch (e) {
+      ErrorDialog.showErrorDialog(context, 'Item amount must be a number.');
+      return;
+    }
 
-    print(itemName);
-    print(itemAmount);
     if (itemName.isNotEmpty) {
       widget.itemEditing.itemName = itemName;
     }

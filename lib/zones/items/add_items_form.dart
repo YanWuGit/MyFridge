@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
-
 import 'package:my_fridge/util/take_picture.dart';
+import 'package:my_fridge/util/error_dialog.dart';
 
 class AddItemsForm extends StatefulWidget {
   final Function(ItemClass) onAddItem;
@@ -41,11 +41,20 @@ class _AddItemsFormState extends State<AddItemsForm> {
   // call this function to add items to database and show on screen
   // rebuild the zone page when this function be called
   void _addItem() {
+    int intItemAmount = 0;
     String itemName = _itemNameController.text.trim();
     String itemAmount = _itemAmountController.text.trim();
     String daysUntilExpire = _daysUntilExpireController.text.trim();
 
-    ItemClass newItem = ItemClass(itemName, int.parse(itemAmount), imagePath: itemImage?.path);
+    try {
+      intItemAmount = int.parse(itemAmount);
+
+    } catch (e) {
+      ErrorDialog.showErrorDialog(context, 'Item amount must be a number.');
+      return;
+    }
+
+    ItemClass newItem = ItemClass(itemName, intItemAmount, imagePath: itemImage?.path);
 
     widget.onAddItem(newItem);
 
