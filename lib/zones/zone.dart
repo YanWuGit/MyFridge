@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_fridge/util/error_dialog.dart';
 import 'package:my_fridge/zones/items/item.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 import 'package:my_fridge/zones/items/add_items_form.dart';
@@ -69,6 +70,14 @@ class _ZoneState extends State<Zone> {
   }
 
   void _editItem(ItemClass editedItem) {
+
+    // check if Item amout is negative
+    if (editedItem.itemAmount < 0) {
+      ErrorDialog.showErrorDialog(context, 'Item amount cannot be negative.');
+      print("Edit not saved in Hive. Item amount cannot be negative.");
+      return;
+    }
+
     setState(() {
       try {
         print('edited item id: ${editedItem.id}');

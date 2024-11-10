@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:my_fridge/util/error_dialog.dart';
 
 import 'package:my_fridge/zones/items/edit_items_form.dart';
 
@@ -38,6 +39,26 @@ class _ItemState extends State<Item> {
             child: EditItemsForm(onEditItem: widget.onEditItem, itemEditing: widget.item, onDeleteItem: widget.onDeleteItem,),
           );
         });
+  }
+
+  void _addItemAmount () {
+    setState(() {
+      widget.item.itemAmount ++;
+    });
+    // save edited item in hive
+    widget.onEditItem(widget.item);
+  }
+
+  void _reduceItemAmount () {
+    setState(() {
+      if (widget.item.itemAmount > 0) {
+        widget.item.itemAmount --;
+        // save edited item in hive
+        widget.onEditItem(widget.item);
+      } else {
+        ErrorDialog.showErrorDialog(context, 'Item amount cannot be further reduced.');
+      }
+    });
   }
 
   @override
@@ -85,6 +106,25 @@ class _ItemState extends State<Item> {
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
                   ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                        onPressed: _reduceItemAmount,
+                        icon: Icon(
+                            Icons.remove_circle_outline,
+                          size: 0.25 * cardWidth,
+                        )
+                    ),
+                    IconButton(
+                        onPressed: _addItemAmount,
+                        icon: Icon(
+                            Icons.add_circle_outline,
+                            size: 0.25 * cardWidth,
+                        ),
+                    )
+                  ],
                 )
               ],
             ),
