@@ -15,11 +15,13 @@ class ItemClass {
   String id;
   @HiveField(3)
   String? imagePath;
+  @HiveField(4)
+  String? iconPath;
 
   static final Uuid _uuid = Uuid();
 
-  ItemClass(this.itemName, this.itemAmount, {String? imagePath}):id = _uuid.v4(), imagePath = imagePath??'';
+  ItemClass(this.itemName, this.itemAmount, {String? imagePath, String? iconPath}):id = _uuid.v4(), imagePath = imagePath??'', iconPath = iconPath??'';
 
-  ItemClass.withId(this.itemName, this.itemAmount, this.id, {String? imagePath}): imagePath = imagePath??'';
+  ItemClass.withId(this.itemName, this.itemAmount, this.id, {String? imagePath, String? iconPath}): imagePath = imagePath??'', iconPath = imagePath??'';
 
 }

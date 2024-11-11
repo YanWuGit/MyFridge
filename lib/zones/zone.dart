@@ -60,7 +60,8 @@ class _ZoneState extends State<Zone> {
       try {
         displayedItems.add(newItem);
         _itemDB.put(widget.zoneName, displayedItems);
-        print("zone: successfully add newItem into itemDB");
+        print(
+            "zone: successfully add newItem into itemDB. Item icon: ${newItem.iconPath}");
         print('item id : ${newItem.id}');
         print(_itemDB.get(widget.zoneName));
       } catch (e) {
@@ -70,7 +71,6 @@ class _ZoneState extends State<Zone> {
   }
 
   void _editItem(ItemClass editedItem) {
-
     // check if Item amout is negative
     if (editedItem.itemAmount < 0) {
       ErrorDialog.showErrorDialog(context, 'Item amount cannot be negative.');
@@ -142,6 +142,7 @@ class _ZoneState extends State<Zone> {
                       onEditItem: _editItem,
                       onDeleteItem: _deleteItem,
                       imagePath: item.imagePath,
+                      itemIconPath: item.iconPath!,
                     ))
                 .toList(),
           ),

@@ -10,17 +10,18 @@ import 'package:my_fridge/util/error_dialog.dart';
 import 'package:my_fridge/util/confirmation_dialog.dart';
 
 import '../../util/camera_utils.dart';
+import 'item_icon_selection.dart';
 
 class EditItemsForm extends StatefulWidget {
   final Function(ItemClass) onEditItem;
   final Function(ItemClass) onDeleteItem;
   final ItemClass itemEditing;
 
-  const EditItemsForm({
-  required this.onEditItem,
-  required this.onDeleteItem,
-  required this.itemEditing,
-  super.key});
+  const EditItemsForm(
+      {required this.onEditItem,
+      required this.onDeleteItem,
+      required this.itemEditing,
+      super.key});
 
   @override
   State<EditItemsForm> createState() => _EditItemsFormState();
@@ -79,7 +80,8 @@ class _EditItemsFormState extends State<EditItemsForm> {
   }
 
   void _deleteItem() async {
-    bool? deletionConfirm = await ConfirmationDialog.showConfirmationDialog(context, 'Delete this item: ${widget.itemEditing.itemName} ?');
+    bool? deletionConfirm = await ConfirmationDialog.showConfirmationDialog(
+        context, 'Delete this item: ${widget.itemEditing.itemName} ?');
 
     if (deletionConfirm == true) {
       widget.onDeleteItem(widget.itemEditing);
@@ -98,6 +100,24 @@ class _EditItemsFormState extends State<EditItemsForm> {
     if (image != null) {
       setState(() {
         widget.itemEditing.imagePath = image.path;
+      });
+    }
+  }
+
+  Future<void> _navToItemIconSelection() async {
+    dynamic imageOrIconPath = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ItemIconSelection()));
+
+    // add '0' to the beginning of the path string to indicate it is image path
+    // '1' would mean it is icon path
+    if (imageOrIconPath[0] == '0') {
+      setState(() {
+        widget.itemEditing.imagePath = imageOrIconPath.substring(1);
+      });
+    } else if (imageOrIconPath[0] == '1') {
+      setState(() {
+        widget.itemEditing.imagePath = '';
+        widget.itemEditing.iconPath = imageOrIconPath.substring(1);
       });
     }
   }
@@ -125,7 +145,9 @@ class _EditItemsFormState extends State<EditItemsForm> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(width: 36,),
+                    const SizedBox(
+                      width: 36,
+                    ),
                     const Center(
                       child: Text(
                         'Edit Item',
@@ -138,36 +160,60 @@ class _EditItemsFormState extends State<EditItemsForm> {
                     ),
                     // This button deletes the current item
                     IconButton(
-                        onPressed: _deleteItem,
-                        icon: const Icon(Icons.delete, size: 36,),
+                      onPressed: _deleteItem,
+                      icon: const Icon(
+                        Icons.delete,
+                        size: 36,
+                      ),
                       tooltip: 'Delete item',
                     )
                   ],
                 )),
-            widget.itemEditing.imagePath == ''? const SizedBox(height: 20,) :
-            SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 0.4 * MediaQuery.of(context).size.height,
-              child: Stack(children: [
-                Positioned.fill(
-                  child: Image.file(
-                    File(widget.itemEditing.imagePath!),
-                    fit: BoxFit.cover,
+            widget.itemEditing.imagePath == ''
+                ? SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 0.4 * MediaQuery.of(context).size.height,
+                    child: Stack(children: [
+                      Positioned.fill(
+                        child: Image(
+                          image: AssetImage(widget.itemEditing.iconPath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                          bottom: 8,
+                          right: 8,
+                          child: IconButton(
+                              onPressed: _navToItemIconSelection,
+                              icon: const Icon(
+                                Icons.sync,
+                                size: 60,
+                                color: Colors.blueGrey,
+                              )))
+                    ]),
+                  )
+                : SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 0.4 * MediaQuery.of(context).size.height,
+                    child: Stack(children: [
+                      Positioned.fill(
+                        child: Image.file(
+                          File(widget.itemEditing.imagePath!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Positioned(
+                          bottom: 8,
+                          right: 8,
+                          child: IconButton(
+                              onPressed: _navToTakePicture,
+                              icon: const Icon(
+                                Icons.sync,
+                                size: 60,
+                                color: Colors.blueGrey,
+                              )))
+                    ]),
                   ),
-                ),
-                Positioned(
-                    bottom: 8,
-                    right: 8,
-                    child: IconButton(
-                        onPressed: _navToTakePicture,
-                        icon: const Icon(
-                          Icons.sync,
-                          size: 60,
-                          color: Colors.blueGrey,
-                        ))
-                )
-              ]),
-              ),
             const SizedBox(
               height: 20,
             ),

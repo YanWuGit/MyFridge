@@ -9,6 +9,7 @@ import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 import 'package:my_fridge/util/take_picture.dart';
 import 'package:my_fridge/util/error_dialog.dart';
+import 'package:my_fridge/zones/items/item_icon_selection.dart';
 
 class AddItemsForm extends StatefulWidget {
   final Function(ItemClass) onAddItem;
@@ -23,7 +24,8 @@ class _AddItemsFormState extends State<AddItemsForm> {
   final _itemNameController = TextEditingController();
   final _itemAmountController = TextEditingController();
   final _daysUntilExpireController = TextEditingController();
-  XFile? itemImage;
+  String? itemImagePath;
+  String itemIconPath = 'assets/pics/item_icons/item_dairy.jpg';
   final double _dialogWidth = Get.width;
 
   @override
@@ -61,8 +63,8 @@ class _AddItemsFormState extends State<AddItemsForm> {
       return;
     }
 
-    ItemClass newItem =
-        ItemClass(itemName, intItemAmount, imagePath: itemImage?.path);
+    ItemClass newItem = ItemClass(itemName, intItemAmount,
+        imagePath: itemImagePath, iconPath: itemIconPath);
 
     widget.onAddItem(newItem);
 
@@ -73,11 +75,29 @@ class _AddItemsFormState extends State<AddItemsForm> {
     Navigator.of(context).pop();
   }
 
-  Future<void> _navToTakePicture() async {
-    XFile? image = await navToTakePicture(context);
-    if (image != null) {
+  // Future<void> _navToTakePicture() async {
+  //   XFile? image = await navToTakePicture(context);
+  //   if (image != null) {
+  //     setState(() {
+  //       itemImage = image;
+  //     });
+  //   }
+  // }
+
+  Future<void> _navToItemIconSelection() async {
+    dynamic imageOrIconPath = await Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ItemIconSelection()));
+
+    // add '0' to the beginning of the path string to indicate it is image path
+    // '1' would mean it is icon path
+    if (imageOrIconPath[0] == '0') {
       setState(() {
-        itemImage = image;
+        itemImagePath = imageOrIconPath.substring(1);
+      });
+    } else if (imageOrIconPath[0] == '1') {
+      setState(() {
+        itemImagePath = null;
+        itemIconPath = imageOrIconPath.substring(1);
       });
     }
   }
@@ -112,16 +132,28 @@ class _AddItemsFormState extends State<AddItemsForm> {
                     ),
                   ),
                 )),
-            if (itemImage == null)
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      foregroundColor: Colors.white,
+            if (itemImagePath == null)
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 0.4 * MediaQuery.of(context).size.height,
+                child: Stack(children: [
+                  Positioned.fill(
+                    child: Image(
+                      image: AssetImage(itemIconPath),
+                      fit: BoxFit.cover,
                     ),
-                    onPressed: _navToTakePicture,
-                    child: const Text('Take a photo')),
+                  ),
+                  Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: IconButton(
+                          onPressed: _navToItemIconSelection,
+                          icon: const Icon(
+                            Icons.sync,
+                            size: 60,
+                            color: Colors.blueGrey,
+                          )))
+                ]),
               )
             else
               SizedBox(
@@ -133,8 +165,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
                       padding: const EdgeInsets.all(16.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          File(itemImage!.path),
+                        child: Image.file(File(itemImagePath!),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -144,7 +175,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
                       bottom: 8,
                       right: 8,
                       child: IconButton(
-                          onPressed: _navToTakePicture,
+                          onPressed: _navToItemIconSelection,
                           icon: const Icon(
                             Icons.sync,
                             size: 60,

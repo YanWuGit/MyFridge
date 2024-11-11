@@ -11,15 +11,17 @@ class Item extends StatefulWidget {
   final ItemClass item;
   final double itemWidth;
   final String? imagePath;
+  String itemIconPath;
   final Function(ItemClass) onEditItem;
   final Function(ItemClass) onDeleteItem;
 
-  const Item({
+  Item({
     required this.item,
     required this.itemWidth,
     required this.onEditItem,
     required this.onDeleteItem,
     this.imagePath,
+    this.itemIconPath = 'assets/pics/item_icons/item_dairy.jpg',
     super.key
   });
 
@@ -81,8 +83,8 @@ class _ItemState extends State<Item> {
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: widget.imagePath == ''?
-                          const Image(
-                            image: AssetImage('assets/pics/lunch-box-1141196_640.jpg'),
+                          Image(
+                            image: AssetImage(widget.itemIconPath),
                             fit: BoxFit.cover,
                           )
                           :Image.file(
