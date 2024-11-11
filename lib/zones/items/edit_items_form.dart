@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -7,6 +8,8 @@ import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
 import 'package:my_fridge/util/error_dialog.dart';
 import 'package:my_fridge/util/confirmation_dialog.dart';
+
+import '../../util/camera_utils.dart';
 
 class EditItemsForm extends StatefulWidget {
   final Function(ItemClass) onEditItem;
@@ -33,12 +36,6 @@ class _EditItemsFormState extends State<EditItemsForm> {
   @override
   void initState() {
     super.initState();
-    // Future.delayed(Duration(milliseconds: 50), () {
-    //   setState(() {
-    //    double _dialogHeight = Get.height / 1.30;
-    //   });
-    // });
-
   }
 
   @override
@@ -57,11 +54,13 @@ class _EditItemsFormState extends State<EditItemsForm> {
     String daysUntilExpire = _daysUntilExpireController.text.trim();
 
     // pop up error message if item amount is not a number
-    try {
-      int.parse(itemAmount);
-    } catch (e) {
-      ErrorDialog.showErrorDialog(context, 'Item amount must be a number.');
-      return;
+    if (itemAmount != '') {
+      try {
+        int.parse(itemAmount);
+      } catch (e) {
+        ErrorDialog.showErrorDialog(context, 'Item amount must be a number.');
+        return;
+      }
     }
 
     if (itemName.isNotEmpty) {
@@ -92,6 +91,15 @@ class _EditItemsFormState extends State<EditItemsForm> {
       Navigator.of(context).pop();
     }
     return;
+  }
+
+  Future<void> _navToTakePicture() async {
+    XFile? image = await navToTakePicture(context);
+    if (image != null) {
+      setState(() {
+        widget.itemEditing.imagePath = image.path;
+      });
+    }
   }
 
   @override
@@ -140,10 +148,25 @@ class _EditItemsFormState extends State<EditItemsForm> {
             SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 0.4 * MediaQuery.of(context).size.height,
-                child: Image.file(
-                  File(widget.itemEditing.imagePath!),
-                  fit: BoxFit.cover,
+              child: Stack(children: [
+                Positioned.fill(
+                  child: Image.file(
+                    File(widget.itemEditing.imagePath!),
+                    fit: BoxFit.cover,
+                  ),
                 ),
+                Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: IconButton(
+                        onPressed: _navToTakePicture,
+                        icon: const Icon(
+                          Icons.sync,
+                          size: 60,
+                          color: Colors.blueGrey,
+                        ))
+                )
+              ]),
               ),
             const SizedBox(
               height: 20,

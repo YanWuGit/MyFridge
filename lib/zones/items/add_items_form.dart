@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_fridge/util/camera_utils.dart';
 
 import 'package:my_fridge/zones/items/input_field.dart';
 import 'package:my_fridge/zones/items/item_class.dart';
@@ -46,15 +47,22 @@ class _AddItemsFormState extends State<AddItemsForm> {
     String itemAmount = _itemAmountController.text.trim();
     String daysUntilExpire = _daysUntilExpireController.text.trim();
 
-    try {
-      intItemAmount = int.parse(itemAmount);
-
-    } catch (e) {
-      ErrorDialog.showErrorDialog(context, 'Item amount must be a number.');
+    // check item name is not empty
+    if (itemName == '') {
+      ErrorDialog.showErrorDialog(context, 'Please give the item a name.');
       return;
     }
 
-    ItemClass newItem = ItemClass(itemName, intItemAmount, imagePath: itemImage?.path);
+    // check item amount is an int
+    try {
+      intItemAmount = int.parse(itemAmount);
+    } catch (e) {
+      ErrorDialog.showErrorDialog(context, 'Item amount need to be a number.');
+      return;
+    }
+
+    ItemClass newItem =
+        ItemClass(itemName, intItemAmount, imagePath: itemImage?.path);
 
     widget.onAddItem(newItem);
 
@@ -66,25 +74,16 @@ class _AddItemsFormState extends State<AddItemsForm> {
   }
 
   Future<void> _navToTakePicture() async {
-    final cameras = await availableCameras();
-
-    try {
-      final XFile? image = await Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => TakePicture(cameras: cameras)),
-      );
-      if (image != null) {
-        setState(() {
-          itemImage = image;
-        });
-      }
-    } catch (e) {
-      print("add_items_form: error navigate to camera - $e");
+    XFile? image = await navToTakePicture(context);
+    if (image != null) {
+      setState(() {
+        itemImage = image;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -113,28 +112,46 @@ class _AddItemsFormState extends State<AddItemsForm> {
                     ),
                   ),
                 )),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: itemImage == null? ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                foregroundColor: Colors.white,
-              ): ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-              ),
-              onPressed: _navToTakePicture,
-              child: itemImage == null ?
-                const Text('Take a photo')
-              : SizedBox(
+            if (itemImage == null)
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: _navToTakePicture,
+                    child: const Text('Take a photo')),
+              )
+            else
+              SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 0.4 * MediaQuery.of(context).size.height,
-                child: Image.file(
-                  File(itemImage!.path),
-                  fit: BoxFit.cover,
-                ),
+                child: Stack(children: [
+                  Positioned.fill(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          File(itemImage!.path),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: IconButton(
+                          onPressed: _navToTakePicture,
+                          icon: const Icon(
+                            Icons.sync,
+                            size: 60,
+                            color: Colors.blueGrey,
+                          )))
+                ]),
               ),
-            ),
             const SizedBox(
               height: 20,
             ),
@@ -152,15 +169,7 @@ class _AddItemsFormState extends State<AddItemsForm> {
               controller: _itemAmountController,
             ),
             const SizedBox(
-              height: 20,
-            ),
-            // InputField(
-            //   title: 'Days Until Expire',
-            //   isSecured: false,
-            //   controller: _daysUntilExpireController,
-            // ),
-            const SizedBox(
-              height: 30,
+              height: 40,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,

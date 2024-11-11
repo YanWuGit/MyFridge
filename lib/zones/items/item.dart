@@ -79,19 +79,19 @@ class _ItemState extends State<Item> {
                   width: widget.itemWidth,
                   height: 1.3 * widget.itemWidth,
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: widget.imagePath == ''?
-                        const Image(
-                          image: AssetImage('assets/pics/lunch-box-1141196_640.jpg'),
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: widget.imagePath == ''?
+                          const Image(
+                            image: AssetImage('assets/pics/lunch-box-1141196_640.jpg'),
+                            fit: BoxFit.cover,
+                          )
+                          :Image.file(
+                          File(
+                              widget.imagePath!
+                          ),
                           fit: BoxFit.cover,
-                        )
-                        :Image.file(
-                        File(
-                            widget.imagePath!
-                        ),
-                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
                 ),
                 Text(
                     widget.item.itemName,

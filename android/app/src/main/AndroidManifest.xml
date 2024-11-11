@@ -6,7 +6,7 @@
     <!-- End of added storage permissions -->
 
     <application
-        android:label="my_fridge"
+        android:label="Fridge"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
